@@ -240,4 +240,36 @@ def main():
   # make the actual website
   return render_template('main.html', articles=articles )
 
+@app.route('/generalized_scraper')
+def run_generalized_scraper():
+  import generalized_scraper
+
+  scraper_inputs = [
+    {
+      'name': 'BBC Science & Environment',
+      'url': 'https://www.bbc.com/news/science_and_environment',
+      'prefix': 'https://bbc.com',
+      'link_selector': 'a[href ^= "/news"].gs-c-promo-heading',
+      'headline_selector': 'h3',
+    },
+    {
+      'name': 'Detroit News',
+      'url': 'https://www.detroitnews.com/news/',
+      'prefix': 'https://www.detroitnews.com/story',
+      'link_selector': 'a.gnt_m_flm_a',
+      'headline_selector': None,
+    },
+    {
+      'name': 'Mlive',
+      'url': 'https://www.mlive.com/',
+      'prefix': '',
+      'link_selector': 'a[data-ga-content-type = "article"]',
+      'headline_selector': None,
+    }
+  ]
+
+  articles = generalized_scraper.get_articles(scraper_inputs)
+
+  return render_template('main.html', articles=articles)
+
 app.run(host='0.0.0.0', port=8080)
