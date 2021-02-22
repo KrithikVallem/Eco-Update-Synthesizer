@@ -93,10 +93,7 @@ def scrape_website(url, prefix, link_selector, headline_selector):
     website_articles = {}
     
     # get the html from the website and pass it to BeautifulSoup
-    # apparently, .content is better than .text when passing data to BeautifulSoup
-    # .content is the original bytecode, but .text is text pre-decoded by requests
-    # BeautifulSoup can do its own byte decoding, so using .content prevents 
-    # decoding mismatch issues between requests and BeautifulSoup
+    # reason for using .content instead of .text: https://stackoverflow.com/a/24790752
     html = requests.get(url).content
     soup = BeautifulSoup(html, 'html.parser')
 

@@ -270,6 +270,8 @@ def run_generalized_scraper():
 
   articles = generalized_scraper.get_articles(scraper_inputs)
 
+  articles = filter_for_keywords(articles, KEYWORDS)
+
   return render_template('main.html', articles=articles)
 
 app.run(host='0.0.0.0', port=8080)
