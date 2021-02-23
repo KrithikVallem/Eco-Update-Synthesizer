@@ -67,7 +67,7 @@ scraper_inputs = [
         'prefix': '',
         'link_selector': 'a[data-ga-content-type = "article"]',
         'headline_selector': None,
-    }
+    },
 ]
 
 
@@ -77,6 +77,7 @@ scraper_inputs = [
 
 import requests
 from bs4 import BeautifulSoup
+import sys
 
 
 """
@@ -118,8 +119,9 @@ def scrape_website(url, prefix, link_selector, headline_selector):
             else link_tag.select_one( headline_selector )
         )
         
-        # extract headline from the headline_tag
-        headline = headline_tag.get_text()
+        # extract headline from the headline_tag, and remove
+        # whitespace, \n, \t from the left and right sides
+        headline = headline_tag.get_text().strip()
 
         # make the actual article link url
         # prefix is in case site only uses relative links (e.g. BBC or Detroit News)
@@ -152,23 +154,24 @@ def get_articles(scraper_inputs):
         try:
             # get new articles from a new website
             website_articles = scrape_website(
-                url = website['url'],
-                prefix = website['prefix'],
-                link_selector = website['link_selector'],
-                headline_selector = website['headline_selector']
+                url=website['url'],
+                prefix=website['prefix'],
+                link_selector=website['link_selector'],
+                headline_selector=website['headline_selector']
             )
             # add the new articles to the accumulative articles dict
             all_articles.update(website_articles)
 
-        except Exception as err:
+        except:
             print('Something went wrong with:')
             print(website)
-            print(err)
+            print('The error is:')
+            print(sys.exc_info()[0])
 
     # after scraping every website, return the accumulative articles from every website
     return all_articles
 
 
-#articles = get_articles(scraper_inputs)
-#print(articles)
+articles = get_articles(scraper_inputs)
+print(articles)
 
