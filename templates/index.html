@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco Update Synthesizer</title>
+
+    <!-- Import WebGL Earth, the library used to generate the interactive globe -->
+    <!-- documentation at http://examples.webglearth.com/ and https://sites.google.com/site/webglearth/ -->
+    <script src="https://www.webglearth.com/v2/api.js"></script>
+
+    <!-- Import Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+
+    <!-- Add Bootstrap and Bootstrap-Vue CSS to the <head> section -->
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css"/>
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@2.21.2/dist/bootstrap-vue.min.css"/>
+    <script src="https://unpkg.com/bootstrap-vue@2.21.2/dist/bootstrap-vue.min.js"></script>
+
+    <!-- Our custom css and js code -->
+
+    <!-- 
+        these variables are set here for convenience
+        because I couldn't figure out how to set them in
+        the static css and js files
+     -->
+    <script>
+      const VALUES_FOR_STATIC_FILES = {
+        ALL_ARTICLES: {{ all_articles | tojson | safe }},
+        ACTIVE_ICON_IMAGE: "{{ url_for('static', filename='/frontend/images/marker-icon-green.png') }}",
+        INACTIVE_ICON_IMAGE: "{{ url_for('static', filename='/frontend/images/marker-icon-grey.png') }}"
+      }
+    </script>
+
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='frontend/index.css') }}">
+    <script src="{{ url_for('static', filename='frontend/globe-utilities.js') }}"></script>
+    <script src="{{ url_for('static', filename='frontend/index.js') }}" defer></script>
+</head>
+<body>
+    <!-- This is now outside the Vue app, so it doesn't need to be re-rendered -->
+    <div id="globe-container">
+        <div id="globe-div"></div>
+    </div>
+    <div id="app">
+        <div id="articles-container">
+            <b-navbar toggleable="true" type="dark" variant="success">
+                <b-navbar-brand href="https://umecodata.github.io/website/" target="_blank" rel="noopener noreferrer">
+                    <img src="{{ url_for('static', filename='frontend/images/EcoData-Logo-Blue.png') }}" height="60" alt="EcoData Logo">
+                </b-navbar-brand>
+                <b-navbar-brand href="#">Eco-Update <br> Synthesizer</b-navbar-brand>
+
+                <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+                <b-collapse id="nav-collapse" is-nav>
+                    <b-navbar-nav>
+                        <b-nav-item
+                            href="https://umecodata.github.io/website/"
+                            target="_blank" rel="noopener noreferrer"
+                        >EcoData</b-nav-item>
+                        <b-nav-item 
+                            href="https://github.com/KrithikVallem/Eco-Update-Synthesizer"
+                            target="_blank" rel="noopener noreferrer"
+                        >Github</b-nav-item>
+                    </b-navbar-nav>
+                </b-collapse>
+            </b-navbar>
+
+            <div id="searchbar-container">
+                <b-form-input 
+                    v-model="searchQuery" 
+                    placeholder="Search the articles!"
+                    id="searchbar"
+                ></b-form-input>
+            </div>
+
+            <b-card 
+                v-for="(item,index) in articles" 
+                :key="index"
+                class="article-card"
+                v-b-toggle=" `collapse-`+index "
+                @click="articleClickedFunction(item)"
+                :ref="item.url"
+            >
+                <!-- 
+                    keep "b-card-img-lazy" in mind if performance suffers from loading a bunch of images at once
+                -->
+                <b-card
+                    :img-src="item.image_url"
+                    :img-alt="item.headline"
+                    overlay :title="item.headline"
+
+                    class="article-image"
+                >
+                </b-card>
+
+                <b-collapse :id=" `collapse-`+index " class="article-details" >
+                    <b-button :href="item.url" target="_blank" rel="noopener" class="link-btn" >Open Article</b-button>
+                    <b-card>
+                        <b-card-text>Sentiment is [[ item.sentiment ]]</b-card-text>
+                        <b-badge 
+                            v-for="(keyword, index) in item.keywords" 
+                            :key="index" 
+                            class="keyword-badge"
+                        >[[ keyword ]]</b-badge>
+                        <b-card-text>[[ getInitialWords(item.text, item.headline) ]]</b-card-text>
+                    </b-card>
+                </b-collapse>
+            </b-card>
+        </div>
+    </div>
+</body>
+</html>

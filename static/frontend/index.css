@@ -1,0 +1,114 @@
+:root {
+    --theme-green: rgba(40,167,69, 1); /* Bootstrap Success Green */
+}
+
+/* This is taken directly from the WebGL Earth Documentation. I think they make the globe and space around take up full screen */
+html, body{padding: 0; margin: 0; background-color: black;}
+
+#articles-container {
+    /* This makes it so that when you scroll down through all the cards, 
+        they only scroll inside the #articles-container 
+        Thus, the globe will always remain visible on screen
+    */
+    max-height: 100vh;
+    overflow-y: scroll;
+
+    background-color:rgba(0,0,0,0.8);
+
+    /* To make sure the entire screen is covered when search returns less than 3 results */
+    height: 100%;      
+}
+
+/* all article cards */
+#articles-container * {
+    background-color: transparent;
+    border-color: transparent;
+    overflow: hidden;
+    font-size: large;
+}
+
+/* actual article image */
+#articles-container img {
+    filter: brightness(0.6);
+    opacity: 0.8;
+
+    /* in case image is a partially-transparent png */
+    background-color: transparent;
+}
+
+/* article image text overlay */
+.article-image * { 
+    color: white !important;
+}
+
+/* collapsed stuff */
+.article-details > * {
+    background-color: transparent !important;
+    color: goldenrod;
+}
+
+/* make search bar stay above articles even after scrolling */
+#searchbar-container {
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 0;
+
+    z-index: 3;
+    background-color: rgba(0,0,0,0.9);
+
+    border-bottom: solid var(--theme-green);
+}
+
+.link-btn {
+    background-color: var(--theme-green) !important;
+    color: white;
+    width: 100%;
+}
+
+.keyword-badge {
+    background-color: var(--theme-green) !important;
+    margin: 0px 5px;
+}
+
+/* I had to code media-queries by hand instead of using a pre-made grid because of troubles integrating WebGL Earth.
+    WebGL Earth requires use of absolute position on desktop to make the earth and space fill the entire container
+    and this was screwing up the small-screen-size grid collapsing of libraries like Bootstrap.
+*/
+
+/* Large Screen Layout */
+@media screen and (min-width: 640px) {
+    /* On large screens, use absolute position to allow articles to float over the globe */
+    /* #globe-container{top: 0; right: 0; bottom: 0; left: 0; position: absolute !important;} */
+    /* ===== COMMENT OUT ONE OF THE TWO CSS LINES IMMEDIATELY ABOVE/BELOW THIS LINE DEPENDING ON WHICH LAYOUT YOU WANT ===== */
+    /* Alternate layout: have globe only take up right side of screen in separate container, without articles floating over it */
+    #globe-container{top: 0; right: 0; bottom: 0; left: 0; position: relative !important; width: 70%; float:right;}
+
+
+    /* globe needs to fill entire screen height on large screens */
+    #globe-div {
+        height: 100vh;
+    }
+
+    /* Position articles-container on left side of screen */
+    #articles-container {
+        position: absolute;
+        left: 0; /* left:0; instead would place this on left side, but the scrollbar will show up */
+        width: 30%;
+    }
+
+    /* Ensure that the articles are above the globe */
+    #globe-container { z-index: 1; }
+    #articles-container{ z-index: 2; }
+    
+}
+
+/* Mobile Layout */
+@media screen and (max-width: 640px) {
+    /* On mobile, change globe-container to position:relative to allow articles to flow under it */
+    #globe-container{top: 0; right: 0; bottom: 0; left: 0; position: relative !important;}
+
+    /* In Title at top, Eco-Update <br> Synthesizer -- ignore the line break on mobile so it looks better */
+    br {
+        display: none;
+    }
+}
