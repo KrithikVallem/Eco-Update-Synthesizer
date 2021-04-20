@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eco Update Synthesizer</title>
     <!-- favicon -->
-    <link rel="icon" href="{{ url_for('static', filename='/frontend/images/EcoData-Logo-White.png') }}">
+    <link href="{{ url_for('static', filename='/frontend/images/favicon.png') }}" rel="icon"  type="image/png">
 
     <!-- Import WebGL Earth, the library used to generate the interactive globe -->
     <!-- documentation at http://examples.webglearth.com/ and https://sites.google.com/site/webglearth/ -->
@@ -98,7 +98,8 @@
                 <b-collapse :id=" `collapse-`+index " class="article-details" >
                     <b-button :href="item.url" target="_blank" rel="noopener" class="link-btn" >Open Article</b-button>
                     <b-card>
-                        <b-card-text>Sentiment is [[ item.sentiment ]]</b-card-text>
+                        <!-- <b-card-text>Sentiment is [[ item.sentiment ]]</b-card-text><br> -->
+                        <b-card-text><strong>Reading Time: [[ item.reading_time ]] min</strong></b-card-text>
                         <b-badge 
                             v-for="(keyword, index) in item.keywords" 
                             :key="index" 

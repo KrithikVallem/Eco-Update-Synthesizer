@@ -141,7 +141,7 @@ def scrape_website(url, prefix, link_selector, headline_selector):
     pointing to the url of that article
     {"headline": "url"}
 """
-def get_articles(scraper_inputs):
+def run_website_scrapers(scraper_inputs):
     # create an empty dict to put stuff into
     # will look like {"headline" : "link"}
     # this will include articles from every single website scraped
@@ -172,6 +172,6 @@ def get_articles(scraper_inputs):
     return all_articles
 
 
-articles = get_articles(scraper_inputs)
-print(articles)
+# articles = get_articles(scraper_inputs)
+# print(articles)
 
