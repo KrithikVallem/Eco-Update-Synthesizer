@@ -6,96 +6,97 @@ import numpy as np
 import scipy
 import gensim
 import pprint
-from gensim.summarization import summarize
+# from gensim.summarization import summarize # not working, how do I install this? ask analysis team later
 import math 
 
 keywords = [
-  "polar",
-  "green tech",
-  "nature",
-  "iceberg",
-  "biodiversity",
-  "biology",
-  "plants",
-  'abatement',
-  'acid rain',
-  'air pollution',
-  'air quality',
+  'polar',
+  'green',
+  'nature',
+  'iceberg',
+  'biodiversity',
+  'biology',
+  'dioxide',
+  'monoxide',
+  'carpooling',
+  'habitat'
+  'warming',
+  'acid',
+  'pollution',
+  'quality',
+  'air',
   'algae',
-  'algal blooms',
-  'alternative energy sources',
+  'alternative',
+  'energy',
   'atmosphere',
-  'backyard burning',
-  'biodegradable waste',
+  'burning',
+  'biodegradable',
   'biodiversity',
   'bioenergy',
   'biofuels',
   'biomass',
+  'biome',
   'biosphere',
+  'biotech',
+  'biotechnology',
   'carbon',
-  'carbon neutrality',
+  'neutrality',
   'cfcs',
-  'cfl bulbs',
-  'civic amenity site',
+  'cfl',
   'climate',
-  'climate change',
+  'change',
   'compost',
   'compostable',
   'composting',
   'conservation',
   'cryptosporidium',
   'deforestation',
-  'development plan',
   'dioxins',
   'disposal',
-  'domestic waste',
-  'draught proofing',
+  'draught',
   'dumping',
   'ecosystem',
   'ecotourism',
-  'electric vehicle',
+  'electric',
   'emissions',
-  'emissions projections',
-  'emissions trading allowance',
-  'energy efficiency',
-  'energy rating',
-  'energy star',
-  'environmental impact',
-  'flora and fauna',
-  'fossil fuels',
-  'fuel poverty',
-  'global warming',
-  'green bin',
-  'green design',
-  'greener homes scheme',
-  'greenhouse effect',
-  'greenhouse gases',
-  'ground water',
-  'hazardous waste',
-  'home energy saving scheme',
-  'household waste',
+  'projections',
+  'energy',
+  'efficiency',
+  'rating',
+  'environmental',
+  'flora',
+  'fauna',
+  'fossil',
+  'fuel',
+  'fuels',
+  'garden',
+  'gardening',
+  'global',
+  'green',
+  'greenhouse',
+  'gases',
+  'water',
+  'hazardous',
   'incinerator',
   'insulation',
-  'kyoto protocol',
-  'kyoto agreement',
+  'kyoto',
   'landfill',
   'mbt',
   'mulch',
-  'municipal waste',
-  'noise pollution',
-  'npws', 
+  'npws',
   'epa',
-  'noxious gases',
-  'oil spill',
-  'organic food',
+  'noxious',
+  'oil',
+  'organic',
   'organic',
   'organism',
-  'ozone layer',
-  'paris climate'
+  'ozone',
+  'pollution',
   'pesticides',
-  'planning permission',
-  'plastic bag levy',
-  'post-consumer waste',
+  'plastic',
+  'plants',
+  'pollutants',
+  'planting',
   'radiation',
   'radioactive',
   'radon',
@@ -103,30 +104,27 @@ keywords = [
   'reforestation',
   'renewable',
   'reuse',
-  'river basin',
+  'river',
   'sewage',
   'smog',
-  'smokeless fuel',
-  'solar panel',
-  'surface water',
+  'smokeless',
+  'solar',
   'sustainable',
-  'toxic waste',
+  'sustainability',
+  'toxic',
   'toxin',
-  'tidy towns',
   'utility',
-  'un framework convention on climate change',
-  'unesco world heritage site',
   'ventilation',
-  'warmer homes scheme',
-  'waste management',
-  'waste prevention',
-  'water vapour',
-  'wind energy',
-  'wind turbine',
+  'waste',
+  'prevention',
+  'vapour',
+  'wind',
+  'turbine',
   'wwf',
-  'world wildlife foundation',
-  'zero emissions'
+  'zero',
 ]
+
+#print(keywords)
 
 
 def is_headline_relevant(headline):
@@ -141,7 +139,7 @@ def is_headline_relevant(headline):
     # .find() returns -1 if the word is not found 
     if headline.find(word) != -1:
       count = count + 1
-
+  
   if count >= 2:
     return True
   else:
@@ -166,16 +164,16 @@ def is_content_relevant(text):
     return False
 
 
-def make_summary(text):
-  # Summary: takes in article text and returns a 30 word summary 
+# def make_summary(text):
+#   # Summary: takes in article text and returns a 30 word summary 
   
-  # from gensim library 
-  # split = False  - does NOT split text into indv. sentences 
-  summary = summarize(text, word_count= 30, split=False)
-  # add "..." to summary 
-  summary_final = summary + "..."
+#   # from gensim library 
+#   # split = False  - does NOT split text into indv. sentences 
+#   summary = summarize(text, word_count= 30, split=False)
+#   # add "..." to summary 
+#   summary_final = summary + "..."
   
-  return summary_final
+#   return summary_final
 
 
 def extract_article_keywords(text):
@@ -205,8 +203,10 @@ def extract_article_keywords(text):
     l.append(b)
   
   # returns the num of keywords found, up to 3 keywords
-  if len(l) == 1:
-    top3 = l[0]
+  if len(l) < 1: ## added this if branch because the program crashes without it ~ Krithik
+    top3 = []
+  elif len(l) == 1:
+    top3 = [l[0]] ##
   elif len(l) == 2:
     top3 = [l[0], l[1]]
   else:
@@ -224,7 +224,7 @@ def calc_read_time(text):
   
   word_list = text.split()
   num_words = len(word_list)
-  print(num_words, "words")
+  #print(num_words, "words")
   
   # define variable that is average human read time / min
   aver_words_per_minute = 225

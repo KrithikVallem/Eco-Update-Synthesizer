@@ -10,6 +10,10 @@ Flask = "^1.1.2"
 bs4 = "^0.0.1"
 justext = "^2.2.0"
 gensim = "^4.0.1"
+geotext = "^0.4.0"
+newspaper3k = "^0.2.8"
+requests-html = "^0.10.0"
+geocoder = "^1.38.1"
 
 [tool.poetry.dev-dependencies]
 

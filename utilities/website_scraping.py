@@ -54,19 +54,68 @@ scraper_inputs = [
         'link_selector': 'a[href ^= "/news"].gs-c-promo-heading',
         'headline_selector': 'h3',
     },
+    # {
+    #     'name': 'Detroit News',
+    #     'url': 'https://www.detroitnews.com/news/',
+    #     'prefix': 'https://www.detroitnews.com/story',
+    #     'link_selector': 'a.gnt_m_flm_a',
+    #     'headline_selector': None,
+    # },
+    # {
+    #     'name': 'Mlive',
+    #     'url': 'https://www.mlive.com/',
+    #     'prefix': '',
+    #     'link_selector': 'a[data-ga-content-type = "article"]',
+    #     'headline_selector': None,
+    # },
     {
-        'name': 'Detroit News',
-        'url': 'https://www.detroitnews.com/news/',
-        'prefix': 'https://www.detroitnews.com/story',
-        'link_selector': 'a.gnt_m_flm_a',
+        'name': 'The Weather Channel',
+        'url': 'https://weather.com/news/',
+        'prefix': 'https://weather.com',
+        'link_selector': 'a[href ^= "/news/news/"]',
+        'headline_selector': 'span',
+    },
+    {
+        'name': 'Grist v2 (they had a website redesign so the old one stopped working)',
+        'url': 'https://grist.org/',
+        'prefix': '',
+        'link_selector': 'a[class *= "tease"]',
         'headline_selector': None,
     },
     {
-        'name': 'Mlive',
-        'url': 'https://www.mlive.com/',
+        'name': 'Environment News Service', # this one gives like 100 articles at once!
+        'url': 'http://ens-newswire.com/',
         'prefix': '',
-        'link_selector': 'a[data-ga-content-type = "article"]',
+        'link_selector': '.post a',
         'headline_selector': None,
+    },
+    {
+        'name': 'AP Environment',
+        'url': 'https://apnews.com/hub/environment',
+        'prefix': 'https://apnews.com',
+        'link_selector': '.CardHeadline a',
+        'headline_selector': 'h1',
+    },
+    {
+        'name': 'Environmental Health News',
+        'url': 'https://www.ehn.org/',
+        'prefix': '',
+        'link_selector': '.custom-post-headline',
+        'headline_selector': None,
+    },
+    {
+        'name': 'CNN Energy and Environment',
+        'url': 'https://www.cnn.com/specials/us/energy-and-environment',
+        'prefix': 'https://www.cnn.com',
+        'link_selector': '.cd__headline a:not([href ^= "/videos/"])',
+        'headline_selector': 'span',
+    },
+    {
+        'name': 'CNN Weather',
+        'url': 'https://www.cnn.com/weather',
+        'prefix': '',
+        'link_selector': '.cd__headline a:not([href ^= "/videos/"])',
+        'headline_selector': 'span',
     },
 ]
 
@@ -78,6 +127,7 @@ scraper_inputs = [
 import requests
 from bs4 import BeautifulSoup
 import sys
+import random
 
 
 """
@@ -141,7 +191,7 @@ def scrape_website(url, prefix, link_selector, headline_selector):
     pointing to the url of that article
     {"headline": "url"}
 """
-def run_website_scrapers(scraper_inputs):
+def run_website_scrapers(scraper_inputs=scraper_inputs):
     # create an empty dict to put stuff into
     # will look like {"headline" : "link"}
     # this will include articles from every single website scraped
@@ -168,10 +218,15 @@ def run_website_scrapers(scraper_inputs):
             print('The error is:')
             print(sys.exc_info()[0])
 
-    # after scraping every website, return the accumulative articles from every website
-    return all_articles
+    # after scraping every website, choose a few random articles across all the scraped websites
+    def get_random_dict_subset(original_dict, subset_size):    
+        return dict( 
+            random.sample(original_dict.items(), min([subset_size, len(original_dict)]) ) 
+        )
+
+    return get_random_dict_subset(all_articles, 50)
 
 
-# articles = get_articles(scraper_inputs)
+# articles = run_website_scrapers(scraper_inputs)
 # print(articles)
 
