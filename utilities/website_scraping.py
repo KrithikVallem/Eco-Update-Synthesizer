@@ -54,20 +54,22 @@ scraper_inputs = [
         'link_selector': 'a[href ^= "/news"].gs-c-promo-heading',
         'headline_selector': 'h3',
     },
-    # {
-    #     'name': 'Detroit News',
-    #     'url': 'https://www.detroitnews.com/news/',
-    #     'prefix': 'https://www.detroitnews.com/story',
-    #     'link_selector': 'a.gnt_m_flm_a',
-    #     'headline_selector': None,
-    # },
-    # {
-    #     'name': 'Mlive',
-    #     'url': 'https://www.mlive.com/',
-    #     'prefix': '',
-    #     'link_selector': 'a[data-ga-content-type = "article"]',
-    #     'headline_selector': None,
-    # },
+    {
+        'name': 'Detroit News',
+        'url': 'https://www.detroitnews.com/news/',
+        'prefix': 'https://www.detroitnews.com/story',
+        'link_selector': 'a.gnt_m_flm_a',
+        'headline_selector': None,
+        'needs_filtering': True,
+    },
+    {
+        'name': 'Mlive',
+        'url': 'https://www.mlive.com/',
+        'prefix': '',
+        'link_selector': 'a[data-ga-content-type = "article"]',
+        'headline_selector': None,
+        'needs_filtering': True,
+    },
     {
         'name': 'The Weather Channel',
         'url': 'https://weather.com/news/',
@@ -128,6 +130,9 @@ import requests
 from bs4 import BeautifulSoup
 import sys
 import random
+
+# pre-filter headlines directly after they are scraped
+from .analysis import is_headline_relevant
 
 
 """
@@ -209,6 +214,17 @@ def run_website_scrapers(scraper_inputs=scraper_inputs):
                 link_selector=website['link_selector'],
                 headline_selector=website['headline_selector']
             )
+
+            # filter article headlines if the website needs filtering
+            # only used on specifically non-environmental websites
+            # because the filtering is too strict on actual environmental news sources
+            if website.get('needs_filtering', False):
+              website_articles = {
+                headline:url
+                for headline,url in website_articles.items()
+                if is_headline_relevant(headline)
+              }
+
             # add the new articles to the accumulative articles dict
             all_articles.update(website_articles)
 
@@ -221,7 +237,10 @@ def run_website_scrapers(scraper_inputs=scraper_inputs):
     # after scraping every website, choose a few random articles across all the scraped websites
     def get_random_dict_subset(original_dict, subset_size):    
         return dict( 
-            random.sample(original_dict.items(), min([subset_size, len(original_dict)]) ) 
+            random.sample(
+              original_dict.items(), 
+              min([subset_size, len(original_dict)]) 
+            ) 
         )
 
     return get_random_dict_subset(all_articles, 50)

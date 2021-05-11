@@ -8,20 +8,13 @@ from flask import Flask, render_template, jsonify
 # return a list of article objects encoded as JSON
 def get_new_articles():
     # scrape all websites, and return a small subset of the scraped articles from all the websites
+    # filtering is automatically done on the websites that require filtering
     # articles_dict is a dict of { "headline": "url" }
     articles_dict = website_scraping.run_website_scrapers()
 
-    # remove articles with irrelevant headlines
-    # same format as articles_dict, { "headline": "url" }
-    filtered_articles_dict = {
-        headline : url
-        for headline,url in articles_dict.items()
-        #if analysis.is_headline_relevant(headline)
-    }
-
     # scrape every article for its html
     # scraped_articles_list is a list of tuples of (headline,url,html)
-    scraped_articles_list = article_scraping.scrape_articles(filtered_articles_dict)
+    scraped_articles_list = article_scraping.scrape_articles(articles_dict)
     
     new_articles = []
     for headline,url,html in scraped_articles_list:
