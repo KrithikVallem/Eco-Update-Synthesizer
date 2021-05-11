@@ -5,6 +5,8 @@ from utilities import website_scraping, article_scraping, article_class, analysi
 from flask import Flask, render_template, jsonify
 # database stuff
 from replit import db
+# make the scrapers run once a day to get new articles
+import schedule, time
 
 # run the scrapers and analyze the newly scraped articles
 # return a list of article objects encoded as JSON
@@ -81,7 +83,6 @@ def refresh_db():
   except:
     # do nothing, just keep using the current
     # articles or the default articles
-    db['articles'] = json.dumps([])
     return
 
 
@@ -100,3 +101,9 @@ def main():
 
 if __name__ == '__main__':
   main()
+
+  # put new articles in the database once a day
+  schedule.every().day.do(refresh_db)
+  while True:
+    schedule.run_pending()
+    time.sleep(1)
