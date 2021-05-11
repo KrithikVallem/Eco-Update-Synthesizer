@@ -3,6 +3,8 @@ import json
 from utilities import website_scraping, article_scraping, article_class, analysis
 # flask: web framework for rendering website
 from flask import Flask, render_template, jsonify
+# database stuff
+from replit import db
 
 # run the scrapers and analyze the newly scraped articles
 # return a list of article objects encoded as JSON
@@ -52,7 +54,17 @@ def get_default_articles():
 
 
 def get_current_articles():
-  current_articles = {}
+  # if the db['articles'] property is not set for some reason
+  if 'articles' not in db.keys():
+    refresh_db()
+
+  # I seem to have accidently double-json-encoded the articles at some point
+  # if this project is ever touched again in the future, this should probably be fixed
+  current_articles = json.loads(
+    json.loads(
+      db['articles'] 
+    )
+  )
 
   # get_current_articles fetches articles stored in db
   # if, for some reason, there is an error doing so, then
@@ -63,16 +75,28 @@ def get_current_articles():
 
 
 def refresh_db():
-  pass
+  try:
+    new_articles = get_new_articles()
+    db['articles'] = json.dumps(new_articles)
+  except:
+    # do nothing, just keep using the current
+    # articles or the default articles
+    db['articles'] = json.dumps([])
+    return
 
 
-app = Flask('app')
-
-@app.route('/', methods=['GET'])
 def main():
-  
-  all_articles = get_current_articles()
-  
-  return render_template('index.html', all_articles=all_articles)
+  app = Flask('app')
 
-app.run(host='0.0.0.0', port=8080)
+  @app.route('/', methods=['GET'])
+  def create_website():
+    return render_template(
+      'index.html', 
+      all_articles=get_current_articles()
+    )
+
+  app.run(host='0.0.0.0', port=8080)
+
+
+if __name__ == '__main__':
+  main()

@@ -4,7 +4,7 @@ import re
 import string
 import numpy as np
 import scipy
-import gensim
+#import gensim
 import pprint
 # from gensim.summarization import summarize # not working, how do I install this? ask analysis team later
 import math 
