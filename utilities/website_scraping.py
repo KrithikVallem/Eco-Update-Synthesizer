@@ -84,13 +84,16 @@ scraper_inputs = [
         'link_selector': 'a[class *= "tease"]',
         'headline_selector': None,
     },
-    {
-        'name': 'Environment News Service', # this one gives like 100 articles at once!
-        'url': 'http://ens-newswire.com/',
-        'prefix': '',
-        'link_selector': '.post a',
-        'headline_selector': None,
-    },
+    # This was commented out because it returns bad urls
+    #   at times and also gives bad image backgrounds
+    #   (a grey background with a giant letter E)
+    # {
+    #     'name': 'Environment News Service', # this one gives like 100 articles at once!
+    #     'url': 'http://ens-newswire.com/',
+    #     'prefix': '',
+    #     'link_selector': '.post a',
+    #     'headline_selector': None,
+    # },
     {
         'name': 'AP Environment',
         'url': 'https://apnews.com/hub/environment',
