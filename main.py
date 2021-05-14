@@ -6,7 +6,8 @@ from flask import Flask, render_template, jsonify
 # database stuff
 from replit import db
 # make the scrapers run once a day to get new articles
-import schedule, time
+import time, multiprocessing
+
 
 # run the scrapers and analyze the newly scraped articles
 # return a list of article objects encoded as JSON
@@ -76,6 +77,7 @@ def get_current_articles():
   return current_articles
 
 
+
 def refresh_db():
   try:
     new_articles = get_new_articles()
@@ -87,7 +89,7 @@ def refresh_db():
 
 
 def main():
-  app = Flask('app')
+  app = Flask(__name__)
 
   @app.route('/', methods=['GET'])
   def create_website():
@@ -96,14 +98,51 @@ def main():
       all_articles=get_current_articles()
     )
 
-  app.run(host='0.0.0.0', port=8080)
+  @app.route('/refresh', methods=['GET'])
+  def refresh_func():
+    
+    current_timestamp = int( time.time() )
+    seconds_per_day = 60*60*24
+
+    if 'most_recent_refresh_timestamp' not in db:
+      db['most_recent_refresh_timestamp'] = 0
+
+    # check to make sure that it has been 24 hours since the last refresh
+    if (
+      current_timestamp
+      - int( db['most_recent_refresh_timestamp'] )
+      > seconds_per_day
+    ):
+      db['most_recent_refresh_timestamp'] = current_timestamp
+
+      # this does the actual refreshing
+      refresh_db()
+
+      return f"Successfully refreshed database at {current_timestamp}!"
+    else:
+      return f"It has been less than 24 hours since the most recent database refresh at {db['most_recent_refresh_timestamp']}! Please try again later!"
+
+  app.run(host='0.0.0.0', port=8080) 
 
 
-if __name__ == '__main__':
-  main()
+if __name__ == "__main__":
+  # use unix cron to manually restart this python script every morning by wget'ing the /refresh endpoint
+  # check .replit for more info
+  #db['most_recent_refresh_timestamp'] = 0
+  #main()
 
-  # put new articles in the database once a day
-  schedule.every().day.do(refresh_db)
   while True:
-    schedule.run_pending()
-    time.sleep(1)
+    # Start foo as a process
+    p = multiprocessing.Process(target=main, name="main", args=())
+    p.start()
+
+    # Wait 10 seconds for foo
+    time.sleep(10)
+
+    # Terminate foo
+    p.terminate()
+
+    # Cleanup
+    p.join()
+
+    break

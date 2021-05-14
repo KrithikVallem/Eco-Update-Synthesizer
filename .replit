@@ -1,1 +1,2 @@
 run = "python3 main.py"
+# wget "https://Eco-Update-Synthesizer.vallemkr.repl.co/refresh" -O "refresh.txt"

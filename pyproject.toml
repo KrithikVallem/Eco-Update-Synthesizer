@@ -15,7 +15,7 @@ newspaper3k = "^0.2.8"
 requests-html = "^0.10.0"
 geocoder = "^1.38.1"
 replit = "^3.0.0"
-schedule = "^1.1.0"
+Flask-APScheduler = "^1.12.2"
 
 [tool.poetry.dev-dependencies]
 
