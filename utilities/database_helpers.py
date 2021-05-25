@@ -115,3 +115,6 @@ def refresh_func():
     return f"Successfully refreshed database at {current_timestamp}!"
   else:
     return f"It has been less than 24 hours since the most recent database refresh at {db['most_recent_refresh_timestamp']}! Please try again later!"
+
+def sanity_check():
+  print(time.ctime())

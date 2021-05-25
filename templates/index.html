@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eco Update Synthesizer</title>
     <!-- favicon -->
-    <link href="{{ url_for('static', filename='/frontend/images/favicon.png') }}" rel="icon"  type="image/png">
+    <link href="{{ url_for('static', filename='frontend/images/favicon.png') }}" rel="icon"  type="image/png">
 
     <!-- Import WebGL Earth, the library used to generate the interactive globe -->
     <!-- documentation at http://examples.webglearth.com/ and https://sites.google.com/site/webglearth/ -->
@@ -30,8 +30,8 @@
     <script>
       const VALUES_FOR_STATIC_FILES = {
         ALL_ARTICLES: {{ all_articles | tojson | safe }},
-        ACTIVE_ICON_IMAGE: "{{ url_for('static', filename='/frontend/images/marker-icon-green.png') }}",
-        INACTIVE_ICON_IMAGE: "{{ url_for('static', filename='/frontend/images/marker-icon-grey.png') }}"
+        ACTIVE_ICON_IMAGE: "{{ url_for('static', filename='frontend/images/marker-icon-green.png') }}",
+        INACTIVE_ICON_IMAGE: "{{ url_for('static', filename='frontend/images/marker-icon-grey.png') }}"
       }
     </script>
 

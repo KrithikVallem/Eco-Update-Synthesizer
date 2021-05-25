@@ -1,36 +1,49 @@
 # flask: web framework for rendering website
 from flask import Flask, render_template, request
 
-import time
+# makes it easier to work with the database
+# all the custom code we wrote (analysis, etc...) is imported and called within this
+from utilities import database_helpers as dbh
 
-from utilities import database_helpers
+# use these to schedule database refreshes once a day
+import time, threading
 
 
-def main():
+def make_website():
   app = Flask(__name__)
 
-  # scheduler = APScheduler()
-  # scheduler.init_app(app)
-
+  # https://stackoverflow.com/a/31265602
+  app.debug = False
+  app.use_reloader=False
 
   @app.route('/', methods=['GET'])
   def create_website():
     return render_template(
       'index.html', 
-      all_articles=database_helpers.get_current_articles()
+      all_articles=dbh.get_current_articles()
     )
-  
-  
 
-  app.run(host='0.0.0.0', port=8080) 
+  app.run(host='0.0.0.0', port=8080)
+
+
+
+# run this in a separate background thread
+# so the flask app in the main thread doesn't block it
+# https://stackoverflow.com/questions/62435134
+# refreshes the database with new articles once a day
+def schedule_database_refreshes():
+  seconds_per_day = 60*60*24
+
+  def background_task():
+    while True:
+      dbh.refresh_db()
+      print("Database refreshed at " + time.ctime() + " UTC time")
+      time.sleep(seconds_per_day)
+  
+  threading.Thread(target=background_task).start()
+
 
 
 if __name__ == "__main__":
-  """
-    # will close down an active flask app
-    shutdown_func = request.environ.get('werkzeug.server.shutdown')
-    if shutdown_func is None:
-      raise RuntimeError('Not running with the Werkzeug Server')
-    shutdown_func()
-  """
-  main()
+  schedule_database_refreshes()
+  make_website()
