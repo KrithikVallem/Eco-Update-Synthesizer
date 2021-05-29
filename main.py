@@ -1,49 +1,22 @@
-# flask: web framework for rendering website
-from flask import Flask, render_template, request
+"""
+  check make_website.py for the actual website-making
 
-# makes it easier to work with the database
-# all the custom code we wrote (analysis, etc...) is imported and called within this
-from utilities import database_helpers as dbh
+  this file simply runs and then kills make_website.py in 24 hour cycles
 
-# use these to schedule database refreshes once a day
-import time, threading
+  each time make_website is called, refresh_db() is called at the start of it
+"""
 
+import subprocess as sp
+import time
 
-def make_website():
-  app = Flask(__name__)
+seconds_per_day = 60*60*24
 
-  # https://stackoverflow.com/a/31265602
-  app.debug = False
-  app.use_reloader=False
+while True:
+  # run the make_website.py script in a subprocess - this also refreshes database
+  proc = sp.Popen(["python3", "make_website.py"])
+  print("website started and db refreshed")
 
-  @app.route('/', methods=['GET'])
-  def create_website():
-    return render_template(
-      'index.html', 
-      all_articles=dbh.get_current_articles()
-    )
-
-  app.run(host='0.0.0.0', port=8080)
-
-
-
-# run this in a separate background thread
-# so the flask app in the main thread doesn't block it
-# https://stackoverflow.com/questions/62435134
-# refreshes the database with new articles once a day
-def schedule_database_refreshes():
-  seconds_per_day = 60*60*24
-
-  def background_task():
-    while True:
-      dbh.refresh_db()
-      print("Database refreshed at " + time.ctime() + " UTC time")
-      time.sleep(seconds_per_day)
-  
-  threading.Thread(target=background_task).start()
-
-
-
-if __name__ == "__main__":
-  schedule_database_refreshes()
-  make_website()
+  # stop running the website after 24 hours
+  time.sleep(seconds_per_day)
+  sp.Popen.terminate(proc)
+  print("website stopped")
