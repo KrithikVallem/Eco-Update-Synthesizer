@@ -58,6 +58,9 @@ html, body{padding: 0; margin: 0; background-color: black;}
 
     border-bottom: solid var(--theme-green);
 }
+#searchbar-container * {
+  color: var(--theme-green);
+}
 
 .link-btn {
     background-color: var(--theme-green) !important;
@@ -68,6 +71,11 @@ html, body{padding: 0; margin: 0; background-color: black;}
 .keyword-badge {
     background-color: var(--theme-green) !important;
     margin: 0px 5px;
+}
+
+/* center text revealed by hamburger menu */
+#nav-collapse * {
+  text-align: center;
 }
 
 /* I had to code media-queries by hand instead of using a pre-made grid because of troubles integrating WebGL Earth.
